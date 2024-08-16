@@ -5,6 +5,8 @@ import com.skylord.firstProject.repository.UserRepo;
 import com.skylord.firstProject.service.UserService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,8 +28,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(ObjectId id) {
-        return userRepo.findById(id).orElse(null);
+    public User getUserById(String userName) {
+        return userRepo.getUserByUserName(userName).orElse(null);
     }
 
     @Override
@@ -37,7 +39,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByUserName(String userName) {
-        return userRepo.getUserByUserName(userName);
+        return userRepo.getUserByUserName(userName).orElse(null);
+    }
+
+    @Override
+    public ResponseEntity<User> updateByUserName(User user, String userName) {
+        User savedUser = getUserByUserName(userName);
+        if (savedUser!=null){
+            savedUser.setUserName(user.getUserName());
+            savedUser.setPassword(user.getPassword());
+            saveUser(savedUser);
+            return new ResponseEntity<>(savedUser, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 

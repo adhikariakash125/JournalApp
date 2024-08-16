@@ -2,18 +2,20 @@ package com.skylord.firstProject.service;
 
 import com.skylord.firstProject.entity.User;
 import org.bson.types.ObjectId;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
     User saveUser(User user);
 
     List<User> getAllUsers();
 
-    User getUserById(ObjectId id);
+    User getUserById(String userName);
 
     void deleteUserById(ObjectId id);
 
     User getUserByUserName(String userName);
+
+    ResponseEntity<User> updateByUserName(User user, String userName);
 }
