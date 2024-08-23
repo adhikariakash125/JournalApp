@@ -11,9 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -24,22 +22,21 @@ public class UserServiceImpl implements UserService {
     private UserRepo userRepo;
 
     @Override
-    public User saveUser(User user){
+    public User saveUser(User user) {
         return userRepo.save(user);
     }
 
     @Override
-    public User createUser(User user){
+    public User createUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(List.of("USER"));
         return userRepo.save(user);
     }
 
     @Override
-    public ResponseEntity<?> deleteUserByUserName(String userName) {
+    public void deleteUserByUserName(String userName) {
         User user = getUserByUserName(userName);
         userRepo.delete(user);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
@@ -65,7 +62,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<User> updateByUserName(User user, String userName) {
         User savedUser = getUserByUserName(user.getUserName());
-        if (savedUser!=null){
+        if (savedUser != null) {
             savedUser.setUserName(user.getUserName());
             savedUser.setPassword(user.getPassword());
             createUser(savedUser);

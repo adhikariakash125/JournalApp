@@ -21,5 +21,5 @@ public interface UserService {
 
     User createUser(User user);
 
-    ResponseEntity<?> deleteUserByUserName(String userName);
+    void deleteUserByUserName(String userName);
 }

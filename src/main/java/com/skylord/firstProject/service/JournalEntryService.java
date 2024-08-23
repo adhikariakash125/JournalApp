@@ -14,9 +14,9 @@ public interface JournalEntryService {
 
     Optional<JournalEntry> getJournalEntryById(ObjectId id);
 
-    void deleteJournalById(ObjectId id, String userName);
+    boolean deleteJournalById(ObjectId id, String userName);
 
     JournalEntry saveJournalEntry(JournalEntry entry);
 
-    ResponseEntity<JournalEntry> updateJournalEntry(JournalEntry journalEntry, ObjectId id);
+    ResponseEntity<JournalEntry> updateJournalEntry(JournalEntry journalEntry, ObjectId id, String userName);
 }

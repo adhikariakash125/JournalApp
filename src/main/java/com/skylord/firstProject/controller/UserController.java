@@ -2,14 +2,11 @@ package com.skylord.firstProject.controller;
 
 import com.skylord.firstProject.entity.User;
 import com.skylord.firstProject.service.UserService;
-import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -36,7 +33,8 @@ public class UserController {
     @DeleteMapping
     public ResponseEntity<?> deleteUser() {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userService.deleteUserByUserName(userName);
+        userService.deleteUserByUserName(userName);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

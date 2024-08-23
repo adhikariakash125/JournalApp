@@ -53,11 +53,21 @@ public class JournalEntryServiceImpl implements JournalEntryService {
     }
 
     @Override
-    public void deleteJournalById(ObjectId id, String userName) {
-        User user = userService.getUserByUserName(userName);
-        journalEntryRepo.deleteById(id);
-        user.getJournalEntries().removeIf(x -> x.getId().equals(id));
-        userService.saveUser(user);
+    @Transactional
+    public boolean deleteJournalById(ObjectId id, String userName) {
+        boolean isRemoved = false;
+        try {
+            User user = userService.getUserByUserName(userName);
+            isRemoved = user.getJournalEntries().removeIf(x -> x.getId().equals(id));
+            if (isRemoved) {
+                journalEntryRepo.deleteById(id);
+                userService.saveUser(user);
+                return isRemoved;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred while deleting the id");
+        }
+        return isRemoved;
     }
 
     @Override
@@ -66,15 +76,16 @@ public class JournalEntryServiceImpl implements JournalEntryService {
     }
 
     @Override
-    public ResponseEntity<JournalEntry> updateJournalEntry(JournalEntry journalEntry, ObjectId id) {
-        Optional<JournalEntry> optionalJournalEntry = getJournalEntryById(id);
-        if (optionalJournalEntry.isPresent()) {
-            JournalEntry entry = optionalJournalEntry.get();
-            entry.setContent(!journalEntry.getContent().isEmpty() ? journalEntry.getContent() : entry.getContent());
-            entry.setTitle(journalEntry.getTitle() != null && !journalEntry.getTitle().isEmpty() ? journalEntry.getTitle() : entry.getTitle());
-            JournalEntry savedJournalEntry = saveJournalEntry(entry);
-            return new ResponseEntity<>(savedJournalEntry, HttpStatus.OK);
+    public ResponseEntity<JournalEntry> updateJournalEntry(JournalEntry journalEntry, ObjectId id, String userName) {
+        User user = userService.getUserByUserName(userName);
+        List<JournalEntry> journalEntries = user.getJournalEntries().stream().filter(entry -> entry.getId().equals(id)).toList();
+        if (journalEntries.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        JournalEntry entry = journalEntries.getFirst();
+        entry.setContent(!journalEntry.getContent().isEmpty() ? journalEntry.getContent() : entry.getContent());
+        entry.setTitle(journalEntry.getTitle() != null && !journalEntry.getTitle().isEmpty() ? journalEntry.getTitle() : entry.getTitle());
+        JournalEntry savedJournalEntry = saveJournalEntry(entry);
+        return new ResponseEntity<>(savedJournalEntry, HttpStatus.OK);
     }
 }
