@@ -18,4 +18,8 @@ public interface UserService {
     User getUserByUserName(String userName);
 
     ResponseEntity<User> updateByUserName(User user, String userName);
+
+    User createUser(User user);
+
+    ResponseEntity<?> deleteUserByUserName(String userName);
 }
