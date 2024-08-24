@@ -22,4 +22,6 @@ public interface UserService {
     User createUser(User user);
 
     void deleteUserByUserName(String userName);
+
+    User createAdmin(User user);
 }

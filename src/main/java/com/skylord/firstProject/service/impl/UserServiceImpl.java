@@ -40,6 +40,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User createAdmin(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(List.of("USER","ADMIN"));
+        return userRepo.save(user);
+    }
+
+    @Override
     public List<User> getAllUsers() {
         return userRepo.findAll();
     }

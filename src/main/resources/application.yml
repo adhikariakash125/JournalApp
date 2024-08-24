@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: firstProject
+  data:
+    mongodb:
+      uri: mongodb+srv://jadonsanchoo2507:8RjOZN6Bgc5lsruW@mongodbcluster.aokys.mongodb.net/?retryWrites=true&w=majority&appName=MongoDbCluster
+      database: journaldb
+      auto-index-creation: true
