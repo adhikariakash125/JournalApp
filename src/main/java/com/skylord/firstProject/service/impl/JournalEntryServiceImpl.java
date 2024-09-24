@@ -6,6 +6,8 @@ import com.skylord.firstProject.repository.JournalEntryRepo;
 import com.skylord.firstProject.service.JournalEntryService;
 import com.skylord.firstProject.service.UserService;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,8 @@ public class JournalEntryServiceImpl implements JournalEntryService {
     @Autowired
     private UserService userService;
 
+    private static final Logger logger = LoggerFactory.getLogger(JournalEntryServiceImpl.class);
+
     @Transactional
     public JournalEntry saveJournalEntry(JournalEntry journalEntry, String userName) {
         try {
@@ -31,8 +35,10 @@ public class JournalEntryServiceImpl implements JournalEntryService {
             JournalEntry entry = journalEntryRepo.save(journalEntry);
             user.getJournalEntries().add(entry);
             userService.saveUser(user);
+            logger.debug("Journal Entry created");
             return entry;
         } catch (Exception exception) {
+            logger.error(exception.getMessage());
             throw new RuntimeException("Journal entry could not be create. Rolling back transactions");
         }
     }
@@ -43,6 +49,7 @@ public class JournalEntryServiceImpl implements JournalEntryService {
             User user = userService.getUserByUserName(userName);
             return user.getJournalEntries();
         } catch (Exception exception) {
+            logger.error(exception.getMessage());
             throw new RuntimeException("No user found");
         }
     }
@@ -65,6 +72,7 @@ public class JournalEntryServiceImpl implements JournalEntryService {
                 return isRemoved;
             }
         } catch (Exception e) {
+            logger.error(e.getMessage());
             throw new RuntimeException("An error occurred while deleting the id");
         }
         return isRemoved;
